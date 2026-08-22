@@ -1,8 +1,8 @@
 # LaTex MarkDown Converter
 
-> **Author** :[ASH](mailto:2519711819@qq.com)
-> **Cooperator** :[DeepSeek](https://deepseek.com)
-> **Version** : 1.0.0
+> **Author** :[ASH](mailto:2519711819@qq.com)  
+> **Cooperator** :[DeepSeek](https://deepseek.com)  
+> **Version** : 1.0.0  
 > **Last Update** : 2026/8/22 - 23:18
 
 ## 基础描述
