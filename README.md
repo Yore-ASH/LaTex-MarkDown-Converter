@@ -1,0 +1,2 @@
+# LaTex MarkDown Converter
+一个专门用来转换含有LaTex语句的MarkDown文件为提供的CSS样式的HTML文件Python应用程序
