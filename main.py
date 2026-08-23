@@ -706,7 +706,7 @@ img { max-width: 100%; }
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Markdown 转换结果</title>
+    <title>{Path(self.input_file.get()).stem}</title>
     
     <!-- KaTeX 数学公式支持 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
