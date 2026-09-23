@@ -1,0 +1,1 @@
+{"name":"mdconv-katex-bridge","private":true,"version":"1.0.0","description":"KaTeX render bridge for LaTeX MarkDown Converter","dependencies":{"katex":"^0.16.22","ws":"^8.21.3"}}

@@ -1,0 +1,1096 @@
+/* 
+   Version: 2.1
+   Author: ASH (Optimized)
+   Last Update: 2026/8/29
+    */
+
+/*  全局重置  */
+.markdown-body * {
+    box-sizing: border-box;
+}
+
+/*  全局容器  */
+.markdown-body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: "Times New Roman", "宋体", "SimSun", serif;
+    font-size: 17px;
+    line-height: 1.8;
+    padding: 20px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/*  标题  */
+.markdown-body h1 {
+    color: #58a6ff;
+    font-weight: 400;
+    font-size: 32px;
+    font-family: "Times New Roman", "宋体", serif;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 12px;
+    margin: 28px 0 16px 0;
+    letter-spacing: 1px;
+}
+.markdown-body h1:first-child {
+    margin-top: 0;
+}
+
+.markdown-body h2 {
+    color: #e6edf3;
+    font-weight: 400;
+    font-size: 26px;
+    font-family: "Times New Roman", "宋体", serif;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 8px;
+    margin: 24px 0 12px 0;
+}
+
+.markdown-body h3 {
+    color: #58a6ff;
+    font-weight: 400;
+    font-size: 20px;
+    font-family: "Times New Roman", "宋体", serif;
+    margin: 20px 0 10px 0;
+}
+
+.markdown-body h4 {
+    color: #8b949e;
+    font-weight: 500;
+    font-size: 17px;
+    font-family: "Times New Roman", "宋体", serif;
+    margin: 16px 0 8px 0;
+}
+
+.markdown-body h5,
+.markdown-body h6 {
+    color: #8b949e;
+    font-weight: 400;
+    font-size: 15px;
+    font-family: "Times New Roman", "宋体", serif;
+    margin: 12px 0 6px 0;
+}
+
+/*  段落  */
+.markdown-body p {
+    margin: 0 0 12px 0;
+    color: #e6edf3;
+    font-family: "Times New Roman", "宋体", serif;
+}
+
+/*  链接  */
+.markdown-body a {
+    color: #58a6ff;
+    text-decoration: none;
+    font-family: inherit;
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+.markdown-body a:hover {
+    text-decoration: underline;
+    color: #79c0ff;
+}
+
+/*  下划线支持  */
+.markdown-body u,
+.markdown-body ins {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    color: #e6edf3;
+}
+.markdown-body .underline {
+    text-decoration: underline;
+}
+.markdown-body .underline-red {
+    text-decoration: underline #da3633;
+}
+.markdown-body .underline-blue {
+    text-decoration: underline #58a6ff;
+}
+.markdown-body .underline-green {
+    text-decoration: underline #238636;
+}
+.markdown-body .underline-yellow {
+    text-decoration: underline #d29922;
+}
+.markdown-body .underline-dashed {
+    text-decoration: underline dashed;
+}
+.markdown-body .underline-dotted {
+    text-decoration: underline dotted;
+}
+.markdown-body .underline-wavy {
+    text-decoration: underline wavy;
+}
+.markdown-body .underline-double {
+    text-decoration: underline double;
+}
+
+/*  强调  */
+.markdown-body strong {
+    color: #e6edf3;
+    font-weight: 700;
+}
+.markdown-body em {
+    color: #8b949e;
+    font-style: italic;
+}
+.markdown-body strong em,
+.markdown-body em strong {
+    color: #58a6ff;
+}
+
+/*  删除线  */
+.markdown-body del,
+.markdown-body s {
+    text-decoration: line-through;
+    color: #8b949e;
+}
+
+/*  上标和下标  */
+.markdown-body sup {
+    font-size: 0.75em;
+    vertical-align: super;
+    color: #8b949e;
+}
+.markdown-body sub {
+    font-size: 0.75em;
+    vertical-align: sub;
+    color: #8b949e;
+}
+
+/*  列表  */
+.markdown-body ul,
+.markdown-body ol {
+    padding-left: 24px;
+    margin: 8px 0 12px 0;
+    color: #e6edf3;
+    font-family: "Times New Roman", "宋体", serif;
+}
+.markdown-body ul ul,
+.markdown-body ol ol,
+.markdown-body ul ol,
+.markdown-body ol ul {
+    margin: 4px 0 4px 0;
+}
+.markdown-body li {
+    margin: 2px 0;
+}
+.markdown-body li p {
+    margin: 4px 0;
+}
+
+/*  引用  */
+.markdown-body blockquote {
+    border-left: 4px solid #58a6ff;
+    padding: 8px 16px;
+    margin: 12px 0;
+    background: #161b22;
+    color: #8b949e;
+    border-radius: 0 4px 4px 0;
+}
+.markdown-body blockquote p {
+    margin: 4px 0;
+    color: #8b949e;
+    font-family: "Times New Roman", "宋体", serif;
+}
+
+/*  行内代码  */
+.markdown-body code {
+    background: #161b22;
+    color: #f85149;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "Cascadia Code", "JetBrains Mono", "Fira Code", monospace;
+    font-size: 0.85em;
+    border: 1px solid #30363d;
+}
+
+/*  代码块  */
+.markdown-body pre {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    padding: 16px 20px;
+    overflow-x: auto;
+    margin: 12px 0;
+    border-radius: 4px;
+}
+.markdown-body pre code {
+    background: #0d1117;
+    color: #e6edf3;
+    padding: 0;
+    border: none;
+    font-family: "Cascadia Code", "JetBrains Mono", "Fira Code", monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    border-radius: 0;
+    display: block;
+    white-space: pre;
+    word-break: normal;
+    overflow-x: auto;
+}
+
+/*  代码高亮  */
+.markdown-body pre .hljs-keyword {
+    color: #ff7b72;
+}
+.markdown-body pre .hljs-string {
+    color: #a5d6ff;
+}
+.markdown-body pre .hljs-comment {
+    color: #8b949e;
+    font-style: italic;
+}
+.markdown-body pre .hljs-function {
+    color: #d2a8ff;
+}
+.markdown-body pre .hljs-number {
+    color: #79c0ff;
+}
+.markdown-body pre .hljs-operator {
+    color: #ff7b72;
+}
+.markdown-body pre .hljs-variable {
+    color: #ffa657;
+}
+.markdown-body pre .hljs-title {
+    color: #d2a8ff;
+}
+.markdown-body pre .hljs-built_in {
+    color: #ffa657;
+}
+.markdown-body pre .hljs-attr {
+    color: #79c0ff;
+}
+.markdown-body pre .hljs-tag {
+    color: #ff7b72;
+}
+.markdown-body pre .hljs-name {
+    color: #7ee787;
+}
+.markdown-body pre .hljs-attribute {
+    color: #79c0ff;
+}
+.markdown-body pre .hljs-literal {
+    color: #79c0ff;
+}
+.markdown-body pre .hljs-type {
+    color: #ffa657;
+}
+.markdown-body pre .hljs-params {
+    color: #e6edf3;
+}
+.markdown-body pre .hljs-class {
+    color: #d2a8ff;
+}
+.markdown-body pre .hljs-meta {
+    color: #8b949e;
+}
+.markdown-body pre .hljs-section {
+    color: #58a6ff;
+}
+
+/*  表格  */
+.markdown-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12px 0;
+    font-size: 14px;
+    font-family: "Times New Roman", "宋体", serif;
+}
+.markdown-body table th {
+    background: #161b22;
+    border: 1px solid #30363d;
+    padding: 8px 12px;
+    text-align: left;
+    color: #58a6ff;
+    font-weight: 500;
+}
+.markdown-body table td {
+    border: 1px solid #30363d;
+    padding: 8px 12px;
+    color: #e6edf3;
+}
+.markdown-body table tr:nth-child(even) {
+    background: #0d1117;
+}
+.markdown-body table tr:hover {
+    background: #161b22;
+}
+
+/*  图片  */
+.markdown-body img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #30363d;
+    margin: 8px 0;
+    border-radius: 4px;
+}
+
+/*  SVG 图片自适应  */
+.markdown-body svg {
+    max-width: 100% !important;
+}
+.markdown-body svg:not([height]) {
+    height: auto !important;
+}
+.markdown-body .svg-figure {
+    margin: 16px 0;
+    text-align: center;
+    max-width: 100%;
+}
+.markdown-body .svg-figure svg {
+    max-width: 100% !important;
+    height: auto !important;
+}
+.markdown-body .svg-figure figcaption {
+    margin-top: 8px;
+    font-size: 0.9em;
+    color: #8b949e;
+    font-style: italic;
+}
+
+/*  分隔线  */
+.markdown-body hr {
+    border: none;
+    border-top: 1px solid #30363d;
+    margin: 24px 0;
+}
+
+/*  任务列表  */
+.markdown-body input[type="checkbox"] {
+    margin-right: 6px;
+    accent-color: #58a6ff;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+.markdown-body input[type="checkbox"]:checked {
+    accent-color: #238636;
+}
+
+/*  脚注  */
+.markdown-body .footnote-ref {
+    color: #58a6ff;
+    font-size: 12px;
+    vertical-align: super;
+}
+.markdown-body .footnotes {
+    border-top: 1px solid #30363d;
+    padding-top: 12px;
+    margin-top: 24px;
+    font-size: 13px;
+    color: #8b949e;
+    font-family: "Times New Roman", "宋体", serif;
+}
+
+/*  自定义标签  */
+.markdown-body .label {
+    display: inline-block;
+    background: #1f3a5f;
+    color: #58a6ff;
+    padding: 1px 10px;
+    font-size: 12px;
+    border-radius: 0;
+    margin: 0 2px;
+    font-family: "Cascadia Code", monospace;
+}
+.markdown-body .label.green {
+    background: #1f3f1f;
+    color: #238636;
+}
+.markdown-body .label.red {
+    background: #3f1f1f;
+    color: #da3633;
+}
+.markdown-body .label.yellow {
+    background: #3f3a1f;
+    color: #d29922;
+}
+.markdown-body .label.purple {
+    background: #2f1f3f;
+    color: #bc8cff;
+}
+
+/*  提醒框  */
+.markdown-body .note {
+    background: #161b22;
+    border-left: 4px solid #58a6ff;
+    padding: 12px 16px;
+    margin: 12px 0;
+}
+.markdown-body .note.warning {
+    border-left-color: #d29922;
+}
+.markdown-body .note.danger {
+    border-left-color: #da3633;
+}
+.markdown-body .note.success {
+    border-left-color: #238636;
+}
+.markdown-body .note p {
+    margin: 4px 0;
+}
+
+/*  折叠面板  */
+.markdown-body details {
+    background: #161b22;
+    border: 1px solid #30363d;
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 4px;
+}
+.markdown-body details summary {
+    color: #58a6ff;
+    cursor: pointer;
+    font-family: "Cascadia Code", monospace;
+}
+.markdown-body details summary:hover {
+    color: #79c0ff;
+}
+.markdown-body details p {
+    margin: 8px 0 4px 0;
+}
+
+/*  章节编号  */
+.markdown-body .chapter-number {
+    color: #30363d;
+    font-size: 13px;
+    letter-spacing: 2px;
+    display: block;
+    margin-top: 4px;
+}
+
+/*  定义列表  */
+.markdown-body dl {
+    margin: 12px 0;
+}
+.markdown-body dt {
+    color: #58a6ff;
+    font-weight: 500;
+    margin: 8px 0 4px 0;
+}
+.markdown-body dd {
+    color: #a0a8b5;
+    margin-left: 20px;
+    padding-left: 12px;
+    border-left: 2px solid #30363d;
+}
+
+/*  键盘按键  */
+.markdown-body kbd {
+    display: inline-block;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: "Cascadia Code", monospace;
+    font-size: 0.85em;
+    color: #e6edf3;
+    box-shadow: 0 1px 0 #30363d;
+}
+
+/*  标记/高亮  */
+.markdown-body mark {
+    background: #1f3a5f;
+    color: #58a6ff;
+    padding: 1px 4px;
+    border-radius: 2px;
+}
+
+/*  缩写  */
+.markdown-body abbr {
+    cursor: help;
+    border-bottom: 1px dotted #8b949e;
+    color: #e6edf3;
+}
+
+/* 行内公式 */
+.markdown-body .katex {
+    font-size: 1.1em;
+    color: #e6edf3;
+}
+
+/* 块级公式容器 */
+.markdown-body .katex-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 16px 0;
+    padding: 4px 50px 4px 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    font-size: 1.15em;
+    color: #e6edf3;
+    position: relative;
+}
+
+/* 公式块背景框 */
+.markdown-body .katex-display>.katex {
+    background: #161b22;
+    border: 1px solid #30363d;
+    padding: 16px 24px;
+    border-radius: 4px;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+/* 公式编号 - 绝对定位在右边 */
+.markdown-body .katex-display .tag-box {
+    display: inline-block !important;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    padding: 4px 14px;
+    border-radius: 4px;
+    color: #8b949e;
+    font-size: 0.8em;
+    font-family: "Times New Roman", "宋体", serif;
+    white-space: nowrap;
+    min-width: 50px;
+    text-align: center;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* 当存在 tag-box 时隐藏 KaTeX 内部原有的 tag */
+.markdown-body .katex-display:has(.tag-box) .katex .tag {
+    display: none !important;
+}
+
+/* 如果没有 tag-box，保留原始 tag 但调整位置 */
+.markdown-body .katex-display:not(:has(.tag-box)) .katex .tag {
+    display: inline-block !important;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    padding: 4px 14px;
+    border-radius: 4px;
+    color: #8b949e;
+    font-size: 0.8em;
+    font-family: "Times New Roman", "宋体", serif;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/*  公式颜色 */
+
+/* 基础变量 */
+.markdown-body .katex .mathnormal {
+    color: #e6edf3;
+}
+.markdown-body .katex .mord {
+    color: #e6edf3;
+}
+.markdown-body .katex .mbin {
+    color: #ff7b72;
+}
+.markdown-body .katex .mrel {
+    color: #ff7b72;
+}
+.markdown-body .katex .mopen,
+.markdown-body .katex .mclose {
+    color: #d2a8ff;
+}
+.markdown-body .katex .mfrac {
+    color: #e6edf3;
+}
+.markdown-body .katex .msqrt {
+    color: #e6edf3;
+}
+.markdown-body .katex .mtext {
+    color: #8b949e;
+}
+.markdown-body .katex .mspace {
+    color: transparent;
+}
+
+/* 希腊字母 - 浅蓝色 */
+.markdown-body .katex .mord .mathnormal {
+    color: #a5d6ff;
+}
+
+/* 数字 - 亮蓝色 */
+.markdown-body .katex .mord .mord mathnormal {
+    color: #79c0ff;
+}
+
+/* 运算符 - 红色 */
+.markdown-body .katex .mbin,
+.markdown-body .katex .mrel {
+    color: #ff7b72;
+}
+
+/* 括号 - 紫色 */
+.markdown-body .katex .mopen,
+.markdown-body .katex .mclose {
+    color: #d2a8ff;
+}
+
+/* 分数 */
+.markdown-body .katex .mfrac .mord {
+    color: #e6edf3;
+}
+
+/* 根号 */
+.markdown-body .katex .msqrt .mord {
+    color: #e6edf3;
+}
+
+/* 上下标 - 灰色 */
+.markdown-body .katex .msup .mord,
+.markdown-body .katex .msub .mord,
+.markdown-body .katex .msubsup .mord {
+    color: #8b949e;
+    font-size: 0.85em;
+}
+
+/* 箭头 - 蓝色 */
+.markdown-body .katex .mrel .mord {
+    color: #58a6ff;
+}
+
+/* 求和/积分符号 - 紫色 */
+.markdown-body .katex .mop {
+    color: #d2a8ff;
+}
+
+/* 极限符号 - 橙色 */
+.markdown-body .katex .mop .mord {
+    color: #ffa657;
+}
+
+/* 矩阵/数组 */
+.markdown-body .katex .array {
+    color: #e6edf3;
+}
+.markdown-body .katex .array .mord {
+    color: #e6edf3;
+}
+
+/* 分割线 */
+.markdown-body .katex .mfrac .hline {
+    border-color: #30363d;
+}
+
+/* cases 环境 */
+.markdown-body .katex .dcases .mord {
+    color: #e6edf3;
+}
+
+/* 文字标注 */
+.markdown-body .katex .mtext {
+    color: #8b949e;
+    font-family: "Times New Roman", "宋体", serif;
+}
+
+/* 字体切换 */
+/* 罗马字体 */
+.markdown-body .katex .mathrm {
+    color: #e6edf3;
+}
+
+/* 无衬线字体 */
+.markdown-body .katex .mathsf {
+    color: #e6edf3;
+}
+
+/* 打印机字体  */
+.markdown-body .katex .mathtt {
+    color: #e6edf3;
+}
+
+/* 花体 */
+.markdown-body .katex .mathcal {
+    color: #d2a8ff;
+}
+
+/* 哥特体 */
+.markdown-body .katex .mathfrak {
+    color: #bc8cff;
+}
+
+/*  双线体  */
+.markdown-body .katex .mathbb {
+    color: #58a6ff;
+}
+
+/*  响应式  */
+@media (max-width: 700px) {
+    .markdown-body {
+        font-size: 15px;
+        padding: 12px 14px;
+    }
+
+    .markdown-body h1 {
+        font-size: 26px;
+    }
+    .markdown-body h2 {
+        font-size: 22px;
+    }
+    .markdown-body h3 {
+        font-size: 18px;
+    }
+
+    .markdown-body table {
+        display: block;
+        overflow-x: auto;
+        max-width: 100%;
+        font-size: 13px;
+    }
+
+    .markdown-body pre code {
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 12px;
+    }
+
+    .markdown-body pre {
+        padding: 12px;
+        font-size: 12px;
+    }
+
+    .markdown-body blockquote {
+        padding: 6px 12px;
+    }
+
+    .markdown-body .katex-display {
+        font-size: 1em;
+        padding: 4px 10px 4px 4px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+    .markdown-body .katex-display>.katex {
+        padding: 12px 16px;
+        width: 100%;
+        overflow-x: auto;
+        flex-shrink: 1;
+    }
+    .markdown-body .katex-display .tag-box {
+        font-size: 0.75em;
+        padding: 2px 12px;
+        min-width: 40px;
+        position: static;
+        transform: none;
+        margin-top: 4px;
+        margin-left: auto;
+    }
+    .markdown-body .katex-display:not(:has(.tag-box)) .katex .tag {
+        position: static;
+        transform: none;
+        margin-top: 4px;
+        margin-left: auto;
+    }
+}
+
+/*  打印优化  */
+@media print {
+    .markdown-body {
+        background: #fff;
+        color: #000;
+        font-family: "Times New Roman", "SimSun", serif;
+    }
+
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4 {
+        color: #000;
+        border-bottom-color: #ccc;
+    }
+
+    .markdown-body a {
+        color: #000;
+        text-decoration: underline;
+    }
+
+    .markdown-body code {
+        background: #f4f4f4;
+        color: #000;
+        border: 1px solid #ddd;
+        font-family: "Cascadia Code", monospace;
+    }
+
+    .markdown-body pre {
+        background: #f4f4f4;
+        border: 1px solid #ddd;
+    }
+    .markdown-body pre code {
+        background: #f4f4f4;
+        color: #000;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .markdown-body blockquote {
+        border-left-color: #666;
+        background: #f9f9f9;
+        color: #333;
+    }
+
+    .markdown-body table th {
+        background: #eee;
+        border-color: #ccc;
+        color: #000;
+    }
+    .markdown-body table td {
+        border-color: #ccc;
+        color: #000;
+    }
+
+    .markdown-body .katex {
+        color: #000 !important;
+    }
+    .markdown-body .katex-display>.katex {
+        background: #f4f4f4;
+        border-color: #ddd;
+        color: #000 !important;
+    }
+    .markdown-body .katex-display .tag-box {
+        background: #f4f4f4;
+        border-color: #ddd;
+        color: #333 !important;
+    }
+    .markdown-body .katex .mathnormal,
+    .markdown-body .katex .mord,
+    .markdown-body .katex .mbin,
+    .markdown-body .katex .mrel,
+    .markdown-body .katex .mopen,
+    .markdown-body .katex .mclose,
+    .markdown-body .katex .mfrac,
+    .markdown-body .katex .msqrt,
+    .markdown-body .katex .mtext,
+    .markdown-body .katex .mop,
+    .markdown-body .katex .array .mord {
+        color: #000 !important;
+    }
+    .markdown-body .katex .mord .mathnormal {
+        color: #000 !important;
+    }
+}
+
+
+/* ============================================================
+   转换器补充样式
+   ------------------------------------------------------------
+   1. Pygments 代码高亮类名（Python-Markdown 的 codehilite）
+   2. .math-inline / .math-display 公式容器
+   3. 目录、页脚、构建提示、公式出错提示
+   ============================================================ */
+
+/* ----- Pygments 高亮 ----- */
+.markdown-body pre .hll { background-color: #ffffcc; }
+.markdown-body pre .c,
+.markdown-body pre .c1,
+.markdown-body pre .cm,
+.markdown-body pre .cs,
+.markdown-body pre .cd { color: #6a737d; font-style: italic; }
+.markdown-body pre .k,
+.markdown-body pre .kc,
+.markdown-body pre .kd,
+.markdown-body pre .kn,
+.markdown-body pre .kp,
+.markdown-body pre .kr,
+.markdown-body pre .kt,
+.markdown-body pre .ow { color: #d73a49; }
+.markdown-body pre .s,
+.markdown-body pre .s1,
+.markdown-body pre .s2,
+.markdown-body pre .sb,
+.markdown-body pre .sc,
+.markdown-body pre .sd,
+.markdown-body pre .se,
+.markdown-body pre .sh,
+.markdown-body pre .si,
+.markdown-body pre .sx,
+.markdown-body pre .sr,
+.markdown-body pre .ss,
+.markdown-body pre .dl { color: #032f62; }
+.markdown-body pre .m,
+.markdown-body pre .mb,
+.markdown-body pre .mf,
+.markdown-body pre .mh,
+.markdown-body pre .mi,
+.markdown-body pre .mo,
+.markdown-body pre .il { color: #005cc5; }
+.markdown-body pre .na,
+.markdown-body pre .nb,
+.markdown-body pre .bp { color: #e36209; }
+.markdown-body pre .nc,
+.markdown-body pre .nn { color: #6f42c1; }
+.markdown-body pre .nf,
+.markdown-body pre .fm { color: #6f42c1; }
+.markdown-body pre .nd { color: #6f42c1; }
+.markdown-body pre .no { color: #005cc5; }
+.markdown-body pre .ni { color: #005cc5; }
+.markdown-body pre .ne { color: #d73a49; }
+.markdown-body pre .nv,
+.markdown-body pre .vc,
+.markdown-body pre .vg,
+.markdown-body pre .vi,
+.markdown-body pre .vm { color: #e36209; }
+.markdown-body pre .nt { color: #22863a; }
+.markdown-body pre .err { color: #b42318; }
+.markdown-body pre .gd { color: #b42318; }
+.markdown-body pre .gi { color: #1a7f37; }
+
+/* ----- 行内公式 ----- */
+.markdown-body .math-inline {
+    display: inline-block;
+    max-width: 100%;
+    line-height: 1.4;
+    vertical-align: baseline;
+}
+.markdown-body .math-inline > .katex {
+    font-size: 1.08em;
+    color: inherit;
+}
+
+/* ----- 块级公式 ----- */
+.markdown-body .math-display {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 16px 0;
+    padding: 12px 64px 12px 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    font-size: 1.12em;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    color: #e6edf3;
+}
+.markdown-body .math-display > .katex-display {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+.markdown-body .math-display .katex-display > .katex {
+    display: inline-block;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+/* ----- 公式编号 ----- */
+.markdown-body .math-display > .tag-box {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-family: "Times New Roman", "SimSun", "宋体", serif;
+    white-space: nowrap;
+    min-width: 50px;
+    text-align: center;
+    background: #21262d;
+    border: 1px solid #30363d;
+    color: #8b949e;
+}
+.markdown-body .math-display .katex .tag { display: none !important; }
+
+/* ----- 公式报错 / 未渲染 ----- */
+.markdown-body .math-error { outline: 1px dashed #d9a1a1; outline-offset: 3px; }
+.markdown-body .katex-error {
+    color: #ff7b72 !important;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.92em;
+}
+.markdown-body .math-raw {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: #ff7b72;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.92em;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ----- SVG 图形 ----- */
+.markdown-body .svg-figure {
+    margin: 18px 0;
+    text-align: center;
+    max-width: 100%;
+}
+.markdown-body .svg-figure svg {
+    max-width: 100% !important;
+    height: auto;
+}
+.markdown-body .svg-figure figcaption {
+    margin-top: 8px;
+    font-size: 0.9em;
+    font-style: italic;
+    color: #8b949e;
+}
+
+/* ----- 目录 ----- */
+.markdown-body .doc-toc {
+    margin: 0 0 28px 0;
+    padding: 14px 20px;
+    font-size: 0.95em;
+    line-height: 1.7;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+}
+.markdown-body .doc-toc ul { list-style: none; margin: 0; padding-left: 14px; }
+.markdown-body .doc-toc > ul { padding-left: 0; }
+.markdown-body .doc-toc li { margin: 2px 0; }
+.markdown-body .doc-toc a { text-decoration: none; }
+
+/* ----- 页脚与构建提示 ----- */
+.markdown-body .doc-footer {
+    max-width: var(--md-width);
+    margin: 28px auto 40px;
+    padding: 0 48px;
+    font-size: 13px;
+    color: #8b949e;
+}
+.markdown-body .build-notice {
+    max-width: var(--md-width);
+    margin: 20px auto 0;
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #3a2d12;
+    border: 1px solid #6b5200;
+    color: #f0d48a;
+}
+
+/* ----- 窄屏适配 ----- */
+@media (max-width: 700px) {
+    .markdown-body .math-display {
+        padding: 10px 12px;
+        justify-content: flex-start;
+    }
+    .markdown-body .math-display > .tag-box {
+        position: static;
+        transform: none;
+        margin-left: auto;
+    }
+    .markdown-body .doc-footer,
+    .markdown-body .build-notice {
+        padding: 0 18px;
+    }
+}
+
+/* ----- 打印时避免公式被切分 ----- */
+@media print {
+    .markdown-body .math-display,
+    .markdown-body .math-inline,
+    .markdown-body .svg-figure {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
