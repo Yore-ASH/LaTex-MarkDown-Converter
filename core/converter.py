@@ -16,8 +16,10 @@ from pathlib import Path
 import markdown
 
 from .assets import find_katex_dir
+from .chem import ChemRenderer, preprocess_structures
 from .css import read_css
 from .katex import KatexRenderer, KatexUnavailable
+from . import mhchem_rules
 from .math import normalize_newlines, protect_math, restore_math
 from .svg import embed_svg_images
 from .template import CLIENT_FALLBACK, build_document
@@ -69,6 +71,11 @@ FALLBACK_CSS = """
 .markdown-body th, .markdown-body td { border: 1px solid #d0d7de; padding: 8px 12px; }
 .markdown-body .svg-figure { text-align: center; margin: 16px 0; }
 .markdown-body .svg-figure svg { max-width: 100%; height: auto; }
+.markdown-body .chem-figure { text-align: center; margin: 18px 0; }
+.markdown-body .chem-figure svg { max-width: 100%; height: auto; }
+.markdown-body .chem-inline svg { height: 1.5em; width: auto; vertical-align: -0.4em; }
+.markdown-body .chem-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #555; }
+.markdown-body .chem-raw { color: #b42318; }
 """
 
 # 存在无法预渲染的公式时插在页面顶部的提示，样式随主题走
@@ -88,6 +95,7 @@ class ConversionOptions:
     output: Path | None = None
     css_path: Path | None = None
     embed_svg: bool = True
+    embed_structures: bool = True
     document_title: str | None = None
     add_footer: bool = False
     add_toc: bool = False
@@ -106,6 +114,7 @@ class ConversionResult:
     math_inline: int = 0
     math_display: int = 0
     math_failed: int = 0
+    structures: int = 0
     svg_embedded: int = 0
     svg_missing: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
@@ -118,12 +127,24 @@ class ConversionEngine:
     实例不是线程安全的，请在每个工作线程里各自创建。
     """
 
-    def __init__(self, katex_dir: Path | None = None, use_katex: bool = True):
+    def __init__(
+        self,
+        katex_dir: Path | None = None,
+        use_katex: bool = True,
+        use_chem: bool = True,
+        browser: str | None = None,
+    ):
         self.katex_dir = katex_dir if katex_dir is not None else find_katex_dir()
         self._renderer: KatexRenderer | None = None
         self._renderer_checked = False
         self._use_katex = use_katex
         self.katex_note = ""
+
+        self._use_chem = use_chem
+        self._browser = browser
+        self._chem: ChemRenderer | None = None
+        self._chem_checked = False
+        self.chem_note = ""
 
     # ------------------------------------------------------------------ 资源
 
@@ -140,11 +161,26 @@ class ConversionEngine:
                 self.katex_note = renderer.unavailable_reason
         return self._renderer
 
+    @property
+    def chem_renderer(self) -> ChemRenderer:
+        if not self._chem_checked:
+            self._chem_checked = True
+            renderer = ChemRenderer(browser=self._browser, enabled=self._use_chem)
+            self._chem = renderer
+            if not renderer.available:
+                self.chem_note = renderer.unavailable_reason
+        assert self._chem is not None
+        return self._chem
+
     def close(self) -> None:
         if self._renderer is not None:
             self._renderer.close()
             self._renderer = None
             self._renderer_checked = False
+        if self._chem is not None:
+            self._chem.close()
+            self._chem = None
+            self._chem_checked = False
 
     def __enter__(self) -> "ConversionEngine":
         return self
@@ -186,6 +222,21 @@ class ConversionEngine:
         text = normalize_newlines(raw)
         markdown_chars = len(text)
 
+        output_dir = Path(options.output).parent if options.output else source.parent
+
+        step("解析结构式")
+        chem_entries: list[tuple[str, str]] = []
+        structures = 0
+        if options.embed_structures:
+            image_dir = output_dir / f"{source.stem}-assets"
+            text, chem_entries = preprocess_structures(
+                text,
+                self.chem_renderer if self._use_chem else None,
+                image_dir=image_dir,
+                logger=logger,
+            )
+            structures = sum(1 for _, payload in chem_entries if "chem-raw" not in payload)
+
         step("解析公式")
         protected = protect_math(text)
         inline_items = [item for item in protected.items if not item.display]
@@ -206,11 +257,10 @@ class ConversionEngine:
             toc_html = build_toc(getattr(parser, "toc_tokens", None) or [])
         parser.reset()
 
-        step("还原公式")
-        body = restore_math(body, protected, renderer=None)
+        step("还原公式与结构式")
+        body = restore_math(body, protected, renderer=None, extra_tokens=chem_entries)
 
         step("处理 SVG")
-        output_dir = Path(options.output).parent if options.output else source.parent
         body, svg_report = embed_svg_images(
             body,
             markdown_path=source,
@@ -280,6 +330,7 @@ class ConversionEngine:
             math_inline=len(inline_items),
             math_display=len(display_items),
             math_failed=failed,
+            structures=structures,
             svg_embedded=svg_report.embedded,
             svg_missing=list(svg_report.missing),
             warnings=warnings,
@@ -315,6 +366,10 @@ class ConversionEngine:
             if item.error:
                 preview = item.tex.strip().replace("\n", " ")[:70]
                 note(f"公式渲染失败：{item.error}（{preview}）", "warning")
+            # 化学式写法检查：这类问题往往不报错，但会渲染成乱码
+            advice = mhchem_rules.describe(item.tex)
+            if advice:
+                note(advice, "warning")
 
         return failed
 

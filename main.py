@@ -38,6 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--out", help="输出目录，默认与源文件同目录")
     parser.add_argument("--title", help="覆盖页面标题，默认取文件名")
     parser.add_argument("--no-svg", action="store_true", help="不内联 SVG，保留图片引用")
+    parser.add_argument("--no-structures", action="store_true", help="不渲染 SMILES 结构式")
     parser.add_argument("--toc", action="store_true", help="在正文开头生成目录")
     parser.add_argument("--footer", action="store_true", help="在页面底部附加署名")
     parser.add_argument("--quiet", action="store_true", help="只输出错误信息")
@@ -83,6 +84,7 @@ def run_cli(args: argparse.Namespace) -> int:
                 else source.with_suffix(".html"),
                 css_path=css_path,
                 embed_svg=not args.no_svg,
+                embed_structures=not args.no_structures,
                 document_title=args.title,
                 add_footer=args.footer,
                 add_toc=args.toc,
@@ -104,6 +106,7 @@ def run_cli(args: argparse.Namespace) -> int:
                     f"完成 {result.output_path.name}："
                     f"公式 {result.math_inline + result.math_display} 处"
                     f"（失败 {result.math_failed}），"
+                    f"结构式 {result.structures} 个，"
                     f"SVG {result.svg_embedded} 个，"
                     f"{result.html_chars / 1024:.0f} KiB，"
                     f"{result.duration:.2f} 秒"

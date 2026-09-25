@@ -1,0 +1,10 @@
+{
+  "name": "mdconv-chem-bridge",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SMILES 结构式渲染桥（smiles-drawer + 本机浏览器）",
+  "dependencies": {
+    "smiles-drawer": "^2.4.1",
+    "puppeteer-core": "^24.0.0"
+  }
+}

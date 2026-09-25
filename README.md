@@ -29,7 +29,8 @@ Markdown 解析器，结果常常出现三类毛病：
 | 功能 | 说明 |
 | --- | --- |
 | 公式 | `$...$` 行内、`$$...$$` 块级，支持 `\begin{aligned}` 等多行环境 |
-| 化学式 | `\ce{2H2 + O2 -> 2H2O}`（KaTeX mhchem） |
+| 化学方程式 | `\ce{2H2 + O2 -> 2H2O}`（KaTeX mhchem），箭头条件用 `->[{上}][{下}]` |
+| 结构式 | SMILES → 骨架式（键线式），支持手性 `@`、顺反 `/` `\`、芳香环、杂环 |
 | 公式编号 | 在公式内写 `\tag{1.1}`，编号排在公式框右侧 |
 | SVG | `![说明](figure.svg)` 直接内联矢量图，自动加图注、自适应宽度 |
 | 代码高亮 | Pygments（Python-Markdown codehilite） |
@@ -37,6 +38,87 @@ Markdown 解析器，结果常常出现三类毛病：
 | 目录 | 可选生成标题目录 |
 | 输入 | 支持拖拽文件到窗口 |
 | 界面 | PySide6 图形界面 + 命令行批量转换 |
+
+## 化学内容怎么写
+
+完整示例见 [`samples/chemistry-demo.md`](samples/chemistry-demo.md)。
+
+### 反应方程式（mhchem）
+
+写在 `$...$` 或 `$$...$$` 里：
+
+```markdown
+$$
+\ce{2H2 + O2 -> 2H2O}
+$$
+
+$$
+\ce{CH3CH2OH ->[{浓硫酸}][{$170^\circ$C}] CH2=CH2 ^ + H2O}
+$$
+```
+
+几个容易踩的坑，程序都会在转换日志里点名提醒：
+
+| 错误写法 | 为什么错 | 改成 |
+| --- | --- | --- |
+| `\ce{A \overset{cat}-> B}` | mhchem 不支持 `\overset` | `\ce{A ->[{cat}] B}` |
+| `\ce{\underset{x}{C}O2}` | mhchem 不支持 `\underset` | 把 `\ce{}` 包进 `$...$` 后再叠 |
+| `\ce{A ->[\text{cat}] B}` | 标注里不能再套 `\text{}` | `\ce{A ->[{cat}] B}` |
+| `\ce{A ->[{170^\circ C}] B}` | 花括号里是正体文本，`^` 不算数学 | `\ce{A ->[{$170^\circ$C}] B}` |
+
+> `$...$` 里是数学（斜体、可带上标），`{}` 里是正体文本（中文、单位）。
+> 确实要把说明叠在结构上下方时，写成
+> `$\underset{\text{还原}}{\ce{...}}$` —— `\underset` 必须在 `\ce{}` **外面**。
+
+### 结构式（骨架式 / 键线式）
+
+用 SMILES 一行文本描述分子，程序画出骨架式：
+
+````markdown
+```smiles # 阿司匹林
+CC(=O)Oc1ccccc1C(=O)O
+```
+
+行内写法：苯环 \smiles{c1ccccc1}。
+````
+
+* 代码块标签：`smiles`（内联 SVG）或 `smiles-png`（导出 PNG 文件，便于插进 Word）。
+* 图注写在 `#` 后面。
+* 写在反引号里的 `` `\smiles{...}` `` 只当作语法示例，不会被渲染。
+
+常用 SMILES：
+
+| 结构 | SMILES | 结构 | SMILES |
+| --- | --- | --- | --- |
+| 乙醇 | `CCO` | 苯 | `c1ccccc1` |
+| 乙酸 | `CC(=O)O` | 苯酚 | `Oc1ccccc1` |
+| 丙酮 | `CC(=O)C` | 苯甲酸 | `OC(=O)c1ccccc1` |
+| 乙酸乙酯 | `CCOC(=O)C` | 萘 | `c1ccc2ccccc2c1` |
+| 环己烷 | `C1CCCCC1` | 吡啶 | `c1ccncc1` |
+| L-丙氨酸 | `C[C@H](N)C(=O)O` | 呋喃 | `c1ccoc1` |
+| 反-2-丁烯 | `C/C=C/C` | 噻吩 | `c1ccsc1` |
+
+语法要点：单键省略，双键 `=`，三键 `#`；支链用圆括号 `CC(C)C`；
+成环用数字配对 `C1CCCCC1`；芳香环用小写 `c n o s`；氢通常不用写。
+
+### 把化学内容放进 Word
+
+Word 的公式编辑器是 **OMML**，它不认 LaTeX，也没有 mhchem，
+所以 `\ce{}` 这类写法**无法**直接在 Word 里排版；Word 原生也几乎不支持 SVG。
+可行做法是导出成高清 PNG 再插入：
+
+```bash
+# 单个结构式，4 倍分辨率
+python tools/chem/make_image.py "CC(=O)Oc1ccccc1C(=O)O" -o 阿司匹林.png --png --scale 4
+
+# 批量：smiles.txt 每行一个 SMILES（可写“名称<TAB>SMILES”）
+python tools/chem/make_image.py --file smiles.txt -o out\ --png --scale 4
+
+# 矢量图（Word 版本较新时可直接插 SVG，无损缩放）
+python tools/chem/make_image.py "c1ccccc1" -o 苯.svg
+```
+
+`samples/chemistry/` 下已预先生成了一批 PNG，可以直接拖进 Word 使用。
 
 ## 安装
 
@@ -48,14 +130,15 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-公式预渲染需要本机有 [node](https://nodejs.org)，并把 KaTeX 装到 `tools/katex`：
+公式预渲染需要本机有 [node](https://nodejs.org)：
 
 ```bash
-cd tools/katex
-npm install
+cd tools/katex && npm install      # KaTeX 渲染桥
+cd ../chem && npm install          # 结构式渲染桥（smiles-drawer + puppeteer-core）
 ```
 
 没有 node 也能用，只是公式改为在浏览器里在线渲染（需要联网）。
+结构式渲染还需要本机装有 Edge 或 Chrome（无头调用，不会弹窗）。
 
 ## 使用
 
@@ -85,6 +168,7 @@ python main.py --cli *.md --css static/css/ServerStyle/3-0.css --quiet
 | `--title` | 覆盖页面标题 |
 | `--toc` / `--footer` | 生成目录 / 附加页脚 |
 | `--no-svg` | 不内联 SVG，保留 `<img>` 引用 |
+| `--no-structures` | 不渲染 SMILES 结构式，按原文保留 |
 | `--quiet` | 只输出错误 |
 
 ## 写作约定
@@ -100,15 +184,20 @@ python main.py --cli *.md --css static/css/ServerStyle/3-0.css --quiet
 main.py                 入口：参数解析、命令行模式
 gui.py                  PySide6 图形界面
 core/
-    converter.py        转换流水线（读取 → 保护公式 → 解析 → 还原 → 出页面）
+    converter.py        转换流水线（读取 → 结构式 → 保护公式 → 解析 → 还原 → 出页面）
     math.py             公式占位符的拆分与还原
+    chem.py             SMILES 结构式渲染与占位替换
+    mhchem_rules.py     化学式写法检查（\overset、标注内数学等）
     katex.py            常驻 Node 渲染进程的封装
     assets.py           KaTeX 样式与字体内嵌
     svg.py              SVG 内联与清理
     css.py              样式表发现与编码嗅探
     template.py         HTML 模板
 static/css/             内置样式表
+samples/                示例文档与已生成的结构式图片
 tools/katex/render.js   KaTeX 渲染桥（node 侧）
+tools/chem/render.js    结构式渲染桥（node 侧）
+tools/chem/make_image.py 单张结构式导出工具
 tools/verify/           无头浏览器渲染自检
 tests/                  回归测试
 ```
@@ -120,7 +209,8 @@ python tests/run_tests.py
 ```
 
 覆盖公式拆分的各种边界（代码块、转义美元、未配对定界符、行尾 `$$`）、
-结构正确性（标题层级、非法嵌套）、SVG 内联与清理、KaTeX 桥批量渲染。
+结构正确性（标题层级、非法嵌套）、SVG 内联与清理、SMILES 结构式渲染与降级、
+mhchem 写法检查、KaTeX 桥批量渲染。
 
 如果本机装了 Edge 或 Chrome，还可以用真实浏览器复核生成结果：
 
@@ -137,7 +227,14 @@ node tools/verify/render_check.js "file:///绝对路径/文档.html" "C:\Program
   跨行的行内代码段（`` ` `` 跨行的情况极少见）。
 * 预渲染依赖 KaTeX 的语法支持范围；KaTeX 不支持的命令会被标记为
   `math-error`，并在日志里给出原始公式，便于定位。
-* 内嵌字体后单个 HTML 约 350 KB 起步，公式越多、SVG 越多则越大。
+* 结构式走的是 SMILES + 二维骨架式渲染：
+  * **能画**：链状/支链、环、芳香环与杂环、官能团、手性楔形键、顺反异构、
+    多环与常见药物分子；
+  * **不能画**：三维构象、反应机理的弯箭头、配位键精细化、聚合物重复单元括号，
+    以及名称到结构的自动转换（需要自己写 SMILES）。
+* 内嵌字体后单个 HTML 约 350 KB 起步，公式越多、SVG 与结构式越多则越大。
+* 结构式默认内联 SVG；用 `smiles-png` 代码块会另外在同级目录生成
+  `<文档名>-assets/` 图片文件夹，方便单独拖进 Word。
 
 ## 许可
 

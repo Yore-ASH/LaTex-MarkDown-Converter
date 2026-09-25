@@ -183,10 +183,17 @@ cython_debug/
 tools/katex/node_modules/
 tools/katex/package-lock.json
 
+# 本项目：结构式渲染桥的依赖同样按需安装
+tools/chem/node_modules/
+tools/chem/package-lock.json
+
 # 本项目：转换产物与临时文件
 *.tmp
 markdown_converter_config.json
 _katex_trace.log
+*-assets/
+_chem_probe.log
+_shot.js
 
 .cursorignore
 .cursorindexingignore

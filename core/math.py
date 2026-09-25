@@ -341,6 +341,7 @@ def restore_math(
     result: ProtectResult,
     renderer=None,
     logger=None,
+    extra_tokens: list[tuple[str, str]] | None = None,
 ) -> str:
     """把占位符还原为渲染结果。
 
@@ -348,6 +349,9 @@ def restore_math(
     ``renderer(tex, display) -> (html | None, error | None)``。
     通常公式已由 ``ConversionEngine`` 批量预渲染并写入 ``MathItem.html``，
     此时传 None 即可。
+
+    ``extra_tokens`` 是其它模块（例如结构式渲染）产生的占位符，
+    它们同样需要从段落里被搬出来，所以一并交给这里处理。
     """
     for item in result.items:
         if renderer is not None:
@@ -356,24 +360,30 @@ def restore_math(
                 preview = item.tex.strip().replace("\n", " ")[:60]
                 logger(f"公式渲染失败：{item.error}（{preview}）", "warning")
 
-    html = _replace_tokens_in_paragraphs(html, result.items)
-    html = _substitute_tokens(html, result.items)
+    html = _replace_tokens_in_paragraphs(html, result.items, extra_tokens)
+    html = _substitute_tokens(html, result.items, extra_tokens)
     return _collapse_empty_emphasis(html)
 
 
-def _substitute_tokens(html: str, items: list[MathItem]) -> str:
+def _substitute_tokens(
+    html: str,
+    items: list[MathItem],
+    extra_tokens: list[tuple[str, str]] | None = None,
+) -> str:
     """一次性替换剩余占位符。
 
     逐个 ``str.replace`` 在长文档上会反复扫描整个 HTML，
     这里合并成一次正则扫描。
     """
-    if not items or MATH_MARK not in html:
-        return html
-
     mapping = {
         item.token: _display_block(item) if item.display else _inline_span(item)
         for item in items
     }
+    for token, payload in extra_tokens or []:
+        mapping[token] = payload
+
+    if not mapping:
+        return html
     pattern = re.compile("|".join(re.escape(token) for token in mapping))
     return pattern.sub(lambda match: mapping[match.group(0)], html)
 
@@ -381,18 +391,23 @@ def _substitute_tokens(html: str, items: list[MathItem]) -> str:
 _PARAGRAPH = re.compile(r"<p>", re.IGNORECASE)
 
 
-def _replace_tokens_in_paragraphs(html: str, items: list[MathItem]) -> str:
-    """把段落内部的块级公式占位符拆出来，避免出现 ``<p><div>``。
+def _replace_tokens_in_paragraphs(
+    html: str,
+    items: list[MathItem],
+    extra_tokens: list[tuple[str, str]] | None = None,
+) -> str:
+    """把段落内部的块级占位符拆出来，避免出现 ``<p><div>``。
 
     KaTeX 的渲染结果里本身还嵌着 ``<div>``，用正则判断闭合位置并不可靠，
-    这里直接定位段落边界：只有落在 ``<p>`` 与 ``</p>`` 之间的块级公式
+    这里直接定位段落边界：只有落在 ``<p>`` 与 ``</p>`` 之间的块级内容
     才需要搬出来。
     """
     display_items = [item for item in items if item.display]
-    if not display_items:
-        return html
-
     mapping = {item.token: _display_block(item) for item in display_items}
+    for token, payload in extra_tokens or []:
+        mapping[token] = payload
+    if not mapping:
+        return html
     tokens = set(mapping)
     parts: list[str] = []
     cursor = 0

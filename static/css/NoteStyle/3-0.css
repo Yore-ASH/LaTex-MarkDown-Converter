@@ -824,3 +824,87 @@
         page-break-inside: avoid;
     }
 }
+
+/* ============================================================
+   结构式补充样式
+   ------------------------------------------------------------
+   ```smiles 代码块与 \smiles{} 由 smiles-drawer 渲染成 SVG，
+   这里负责图形尺寸、图注与渲染失败时的提示样式。
+   ============================================================ */
+
+.markdown-body .chem-figure {
+    margin: 18px 0;
+    text-align: center;
+    max-width: 100%;
+}
+.markdown-body .chem-figure svg {
+    max-width: 100%;
+    height: auto;
+    max-height: 420px;
+}
+.markdown-body .chem-figure figcaption {
+    margin-top: 8px;
+    font-size: 0.9em;
+    font-style: italic;
+    #555;
+}
+
+/* 行内结构式：高度与文字行高对齐 */
+.markdown-body .chem-inline {
+    display: inline-block;
+    vertical-align: -0.45em;
+    margin: 0 2px;
+    max-width: 100%;
+}
+.markdown-body .chem-inline svg {
+    height: 1.6em;
+    width: auto;
+    max-width: 100%;
+    display: block;
+}
+
+/* 结构式导出为 PNG 时的显示尺寸 */
+.markdown-body .chem-png {
+    max-width: 100%;
+    height: auto;
+    border: none;
+    margin: 0;
+}
+
+/* 渲染失败：显示 SMILES 原文 */
+.markdown-body .chem-raw {
+    display: block;
+    padding: 10px 14px;
+    margin: 12px 0;
+    border: 1px solid #f0c4c4;
+    border-radius: 4px;
+    background: #fdf3f3;
+    color: #b42318;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.9em;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.markdown-body .chem-raw code {
+    background: transparent;
+    border: none;
+    color: inherit;
+    padding: 0;
+}
+
+@media (max-width: 700px) {
+    .markdown-body .chem-figure svg {
+        max-height: 300px;
+    }
+    .markdown-body .chem-inline svg {
+        height: 1.35em;
+    }
+}
+
+@media print {
+    .markdown-body .chem-figure,
+    .markdown-body .chem-inline {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}

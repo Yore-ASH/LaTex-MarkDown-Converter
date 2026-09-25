@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>结构式渲染</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+  }
+  #canvas {
+    display: inline-block;
+    line-height: 0;
+    padding: 8px;
+    background: #ffffff;
+  }
+  #canvas svg {
+    display: block;
+  }
+</style>
+</head>
+<body>
+<div id="canvas"></div>
+<script>
+/*
+ * smiles-drawer.js 由渲染桥在页面加载后注入（见 render.js）。
+ * 这里只暴露两个方法：render 负责画，reset 负责清空。
+ */
+window.__chem = {
+    render: function (smiles, options) {
+        options = options || {};
+        if (!window.SmilesDrawer) {
+            return { ok: false, svg: '', width: 0, height: 0, error: 'smiles-drawer 未加载' };
+        }
+
+        var canvas = document.getElementById('canvas');
+        canvas.innerHTML = '';
+
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        canvas.appendChild(svg);
+
+        var drawer = new window.SmilesDrawer.SmiDrawer({
+            width: options.width || 420,
+            height: options.height || 320,
+            bondThickness: options.bondThickness || 1.1,
+            bondLength: options.bondLength || 24,
+            atomVisualization: options.atomVisualization || 'default',
+            terminalCarbons: options.terminalCarbons === true,
+            explicitHydrogens: options.explicitHydrogens === true,
+            compactDrawing: options.compactDrawing === true,
+            isomeric: options.isomeric !== false,
+            DEBUG: false
+        });
+
+        // v2 的签名是 draw(data, target, themeName)
+        drawer.draw(smiles, svg, options.theme || 'light');
+
+        var markup = svg.outerHTML;
+        var hasDrawing = /<(line|path|text|polygon)\b/i.test(markup);
+
+        // 库只写了 viewBox，没有宽高，这里补上，保证在页面与截图里都有确定尺寸
+        var viewBox = (svg.getAttribute('viewBox') || '').split(/[\s,]+/).map(Number);
+        var boxWidth = viewBox.length === 4 && viewBox[2] > 0 ? viewBox[2] : 300;
+        var boxHeight = viewBox.length === 4 && viewBox[3] > 0 ? viewBox[3] : 150;
+        svg.setAttribute('width', String(boxWidth));
+        svg.setAttribute('height', String(boxHeight));
+        svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+        // 让 SVG 的字体随画布缩放，避免内联进文档后字号与图形比例失调
+        var style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+        style.textContent =
+            '.element{font:11px Arial, Helvetica, sans-serif;}' +
+            '.sub{font:3px Arial, Helvetica, sans-serif;}';
+        svg.insertBefore(style, svg.firstChild);
+
+        return {
+            ok: hasDrawing,
+            svg: svg.outerHTML,
+            width: Math.ceil(boxWidth),
+            height: Math.ceil(boxHeight)
+        };
+    },
+
+    reset: function () {
+        document.getElementById('canvas').innerHTML = '';
+    },
+
+    /** 供截图使用：量出画布当前像素尺寸。 */
+    measure: function () {
+        var canvas = document.getElementById('canvas');
+        var rect = canvas.getBoundingClientRect();
+        return { width: Math.ceil(rect.width), height: Math.ceil(rect.height) };
+    }
+};
+</script>
+</body>
+</html>

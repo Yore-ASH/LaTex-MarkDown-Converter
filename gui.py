@@ -234,9 +234,16 @@ class MainWindow(QMainWindow):
         self.embed_svg_box.setToolTip("把 ![](x.svg) 的图形内容直接写进 HTML")
         options.addWidget(self.embed_svg_box, 0, 0)
 
+        self.embed_chem_box = QCheckBox("渲染结构式")
+        self.embed_chem_box.setChecked(True)
+        self.embed_chem_box.setToolTip(
+            "把 ```smiles 代码块与 \\smiles{...} 渲染成骨架式（键线式）"
+        )
+        options.addWidget(self.embed_chem_box, 0, 1)
+
         self.auto_open_box = QCheckBox("转换后自动打开")
         self.auto_open_box.setChecked(True)
-        options.addWidget(self.auto_open_box, 0, 1)
+        options.addWidget(self.auto_open_box, 0, 2)
 
         self.footer_box = QCheckBox("页脚署名")
         self.footer_box.setToolTip("在页面底部附加文件名与生成工具说明")
@@ -282,10 +289,18 @@ class MainWindow(QMainWindow):
               li { margin: 3px 0; }
             </style>
             <ul>
-              <li><b>公式</b>：支持 <code>$...$</code> 与 <code>$$...$$</code>，
-                  以及 <code>\\ce{...}</code> 化学式；公式在转换时由 KaTeX 预渲染成
-                  HTML 并内嵌字体，生成的页面断网也能正常显示。</li>
+              <li><b>公式</b>：支持 <code>$...$</code> 与 <code>$$...$$</code>；
+                  公式在转换时由 KaTeX 预渲染成 HTML 并内嵌字体，
+                  生成的页面断网也能正常显示。</li>
               <li><b>编号</b>：在公式里写 <code>\\tag{1.1}</code>，编号会排在公式右侧。</li>
+              <li><b>化学方程式</b>：用 <code>\\ce{2H2 + O2 -> 2H2O}</code>。
+                  箭头标注写成 <code>\\ce{A ->[{上方}][{下方}] B}</code>，
+                  <b>不要</b>用 <code>\\overset</code>/<code>\\underset</code>，
+                  mhchem 不支持，写了会渲染成源码。</li>
+              <li><b>结构式（键线式）</b>：用 SMILES 描述，例如
+                  <code>```smiles # 阿司匹林</code> 代码块，或行内
+                  <code>\\smiles{CC(=O)O}</code>。手性用 <code>@</code>，
+                  顺反用 <code>/</code> 与 <code>\\</code>。</li>
               <li><b>SVG</b>：<code>![说明](figure.svg)</code> 会把图形内联到页面中，
                   路径相对 Markdown 文件或输出目录解析。</li>
               <li><b>美元符号</b>：写作 <code>\\$</code> 可避免被当作公式起始；
@@ -322,6 +337,7 @@ class MainWindow(QMainWindow):
         self.output_edit.setText(self.settings.value("output_dir", "", str))
         self.auto_open_box.setChecked(self.settings.value("auto_open", True, bool))
         self.embed_svg_box.setChecked(self.settings.value("embed_svg", True, bool))
+        self.embed_chem_box.setChecked(self.settings.value("embed_structures", True, bool))
         self.footer_box.setChecked(self.settings.value("add_footer", False, bool))
 
         saved_css = self.settings.value("css_path", "", str)
@@ -350,6 +366,7 @@ class MainWindow(QMainWindow):
         self.settings.setValue("output_dir", self.output_edit.text())
         self.settings.setValue("auto_open", self.auto_open_box.isChecked())
         self.settings.setValue("embed_svg", self.embed_svg_box.isChecked())
+        self.settings.setValue("embed_structures", self.embed_chem_box.isChecked())
         self.settings.setValue("add_footer", self.footer_box.isChecked())
         self.settings.setValue("css_path", self.css_edit.text())
         theme = self.theme_combo.currentData()
@@ -511,6 +528,7 @@ class MainWindow(QMainWindow):
         self.log(
             f"完成：{self.last_output.name}"
             f"（公式 {result.math_inline + result.math_display} 处"
+            + (f"，结构式 {result.structures} 个" if result.structures else "")
             + (f"，SVG {result.svg_embedded} 个" if result.svg_embedded else "")
             + f"，用时 {result.duration:.2f} 秒）",
             "success",
@@ -521,7 +539,9 @@ class MainWindow(QMainWindow):
             "info",
         )
         if result.math_failed:
-            self.log(f"有 {result.math_failed} 处公式未能预渲染，已启用在线兜底", "warning")
+            self.log(
+                f"有 {result.math_failed} 处公式未能预渲染，页面中显示原始写法", "warning"
+            )
         self.statusBar().showMessage(f"转换完成：{self.last_output.name}")
 
         if self.auto_open_box.isChecked():
@@ -549,17 +569,27 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------- 帮助
 
     def _report_environment(self) -> None:
+        from core.chem import find_browser
+
         node = find_node()
         self.log(f"{APP_NAME} {APP_VERSION} 已就绪", "info")
         if node:
             self.log(f"公式预渲染引擎：{node}", "info")
         else:
             self.log("未找到 node，公式将改用在线渲染，请保持联网", "warning")
+
+        browser = find_browser()
+        if browser:
+            self.log(f"结构式渲染浏览器：{Path(browser).name}", "info")
+        else:
+            self.log("未找到 Edge / Chrome，结构式将显示 SMILES 原文", "warning")
+
         if not self.themes:
             self.log("static 目录下没有找到样式表，将使用内置基础样式", "warning")
 
     def show_environment(self) -> None:
         from core.assets import find_katex_dir
+        from core.chem import check_environment as check_chem_environment, find_browser
         from core.converter import check_katex_environment
 
         katex_dir = find_katex_dir()
@@ -567,9 +597,16 @@ class MainWindow(QMainWindow):
         lines.append(f"Node：{find_node() or '未找到'}")
         lines.append(f"KaTeX：{katex_dir or '未找到'}")
         ok, detail = check_katex_environment(katex_dir)
-        lines.append(f"预渲染自检：{'通过' if ok else '失败'}")
+        lines.append(f"公式预渲染自检：{'通过' if ok else '失败'}")
         if not ok:
             lines.append(f"原因：{detail}")
+
+        lines.append(f"结构式浏览器：{find_browser() or '未找到'}")
+        chem_ok, chem_detail = check_chem_environment()
+        lines.append(f"结构式渲染自检：{'通过' if chem_ok else '未启用'}")
+        if not chem_ok:
+            lines.append(f"原因：{chem_detail}")
+
         if self.themes:
             lines.append("可用样式：")
             lines.extend(f"  · {theme.label}（{theme.path.name}）" for theme in self.themes)
@@ -580,10 +617,11 @@ class MainWindow(QMainWindow):
             self,
             "关于",
             f"<b>{APP_NAME}</b> {APP_VERSION}<br><br>"
-            "把带 LaTeX 与 SVG 的 Markdown 转成单个自包含 HTML。<br>"
-            "数学公式在转换阶段预渲染并内嵌字体，页面离线可用。<br><br>"
+            "把带 LaTeX、化学式与 SVG 的 Markdown 转成单个自包含 HTML。<br>"
+            "数学公式在转换阶段预渲染并内嵌字体，页面离线可用；<br>"
+            "SMILES 结构式（骨架式/键线式）由本机浏览器无头渲染成 SVG。<br><br>"
             "作者：Yore.ASH<br>"
-            "技术栈：Python · PySide6 · Python-Markdown · KaTeX",
+            "技术栈：Python · PySide6 · Python-Markdown · KaTeX · mhchem · smiles-drawer",
         )
 
     # ------------------------------------------------------------- 生命周期
